@@ -27,6 +27,10 @@ class UserRepository:
             .filter(User.email == email)
             .first()
         )
+    
+    #get all users 
+    def get_all_users(self, db: Session):
+        return db.query(User).all()
 
 
     # update user
