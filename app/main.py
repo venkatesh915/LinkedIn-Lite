@@ -1,11 +1,11 @@
 from fastapi import FastAPI
-#from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 
-'''from app.routers.user import router as user_router
+from app.routers.user import router as user_router
 from app.routers.post import router as post_router
 from app.routers.comment import router as comment_router
 from app.routers.follow import router as follow_router
-from app.routers.like import router as like_router'''
+from app.routers.like import router as like_router
 
 
 app = FastAPI(
@@ -57,7 +57,7 @@ async def health():
 # Register Routers
 # -----------------------------
 
-'''app.include_router(
+app.include_router(
     user_router,
     prefix="/users",
     tags=["Users"]
@@ -85,4 +85,4 @@ app.include_router(
     like_router,
     prefix="/likes",
     tags=["Likes"]
-)'''  
+)
