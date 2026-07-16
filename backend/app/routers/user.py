@@ -13,7 +13,7 @@ from app.schemas.auth import (
     LoginRequest,
     Token
 )
-
+from app.dependencies.auth import get_current_user
 from app.services import user_service
 from app.services import auth_service
 
@@ -75,10 +75,12 @@ async def login(
 # ----------------------------
 @router.get(
     "/users",
+    response_model=list[UserResponse],
     status_code=status.HTTP_200_OK
 )
-async def get_users(
-    db: Session = Depends(get_db)
+async def get_all_users(
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
 ):
     try:
         users = user_service.get_all_users(db)
@@ -98,12 +100,13 @@ async def get_users(
     "/users/{user_id}",
     response_model=UserResponse
 )
-async def get_user(
+async def get_user_by_id(
     user_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
 ):
     try:
-        user = user_service.get_userby_id(
+        user = user_service.get_user_by_id(
             db,
             user_id
         )
@@ -136,7 +139,8 @@ async def get_user(
 async def update_user(
     user_id: int,
     user: UserUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
 ):
     try:
         updated_user = user_service.update_user(
@@ -172,7 +176,8 @@ async def update_user(
 )
 async def delete_user(
     user_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
 ):
     try:
         deleted = user_service.delete_user(

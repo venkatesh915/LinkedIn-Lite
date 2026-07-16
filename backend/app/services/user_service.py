@@ -28,9 +28,32 @@ def get_all_users(db):
 
 # Update User
 def update_user(db, user_id: int, user: UserUpdate):
-    return user_repository.update_user(db, user_id, user)
+    db_user = user_repository.get_user_by_id(db, user_id)
+
+    if not db_user:
+        return None
+
+    if user.full_name is not None:
+        db_user.full_name = user.full_name
+
+    if user.bio is not None:
+        db_user.bio = user.bio
+
+    if hasattr(user, "headline") and user.headline is not None:
+        db_user.headline = user.headline
+
+    if hasattr(user, "profile_image_url") and user.profile_image_url is not None:
+        db_user.profile_image = user.profile_image_url
+
+    return user_repository.update_user(db, db_user)
 
 
 # Delete User
 def delete_user(db, user_id: int):
-    return user_repository.delete_user(db, user_id)
+    db_user = user_repository.get_user_by_id(db, user_id)
+
+    if not db_user:
+        return None
+
+    user_repository.delete_user(db, db_user)
+    return True
