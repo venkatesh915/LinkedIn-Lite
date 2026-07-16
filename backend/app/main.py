@@ -9,7 +9,6 @@ from app.routers.like import router as like_router
 
 from app.core.database import Base, engine
 
-
 from app.models.user import User
 from app.models.post import Post
 from app.models.comment import Comment
