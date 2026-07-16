@@ -7,6 +7,15 @@ from app.routers.comment import router as comment_router
 from app.routers.follow import router as follow_router
 from app.routers.like import router as like_router
 
+from app.core.database import Base, engine
+
+
+from app.models.user import User
+from app.models.post import Post
+from app.models.comment import Comment
+from app.models.like import Like
+from app.models.follow import Follow
+
 
 app = FastAPI(
     title="LinkedIn Lite API",
@@ -16,6 +25,7 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+Base.metadata.create_all(bind=engine)
 
 # -----------------------------
 # CORS Configuration
