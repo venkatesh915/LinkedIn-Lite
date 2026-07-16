@@ -75,6 +75,7 @@ app.include_router(
     tags=["Comments"]
 )
 
+
 app.include_router(
     follow_router,
     prefix="/follow",

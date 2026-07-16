@@ -28,13 +28,16 @@ async def create_comment(
     db: Session = Depends(get_db)
 ):
     try:
-        return comment_service.add_comment(db, comment)
+        return comment_service.create_comment(db, comment)
 
     except Exception as e:
         raise HTTPException(
             status_code=400,
             detail=str(e)
         )
+
+
+
 
 
 # -----------------------------
@@ -44,6 +47,7 @@ async def create_comment(
     "/post/{post_id}",
     response_model=list[CommentResponse]
 )
+
 async def get_comments(
     post_id: int,
     db: Session = Depends(get_db)
@@ -73,7 +77,7 @@ async def get_comment(
     db: Session = Depends(get_db)
 ):
     try:
-        return comment_service.get_comment(
+        return comment_service.get_comment_by_id(
             db,
             comment_id
         )

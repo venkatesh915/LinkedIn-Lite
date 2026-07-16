@@ -1,34 +1,36 @@
-from sqlalchemy.orm import Session
 from app.models.user import User
-from app.repositories.user_repository import UserRepository
+from app.schemas.user import UserCreate, UserUpdate
 from app.utils.hashing import hash_password
 
-user_repo = UserRepository()
+from app.repositories.user_repository import UserRepository
+user_repository = UserRepository()
+# Create User
+def create_user(db, user: UserCreate):
+    db_user = User(
+        email=user.email,
+        full_name=user.full_name,
+        username=user.username,
+        password=hash_password(user.password)
+    )
+
+    return user_repository.create_user(db, db_user)
 
 
-def register_user(db: Session, user: User):
-
-    existing_user = user_repo.get_user_by_email(db, user.email)
-
-    if existing_user:
-        raise Exception("Email already exists")
-
-    user.password = hash_password(user.password)
-
-    return user_repo.create_user(db, user)
+# Get User by ID
+def get_user_by_id(db, user_id: int):
+    return user_repository.get_user_by_id(db, user_id)
 
 
-def get_user(db: Session, user_id: int):
-    return user_repo.get_user_by_id(db, user_id)
+# Get All Users
+def get_all_users(db):
+    return user_repository.get_all_users(db)
 
 
-def get_all_users(db: Session):
-    return user_repo.get_all_users(db)
+# Update User
+def update_user(db, user_id: int, user: UserUpdate):
+    return user_repository.update_user(db, user_id, user)
 
 
-def update_user(db: Session, user: User):
-    return user_repo.update_user(db, user)
-
-
-def delete_user(db: Session, user: User):
-    return user_repo.delete_user(db, user)
+# Delete User
+def delete_user(db, user_id: int):
+    return user_repository.delete_user(db, user_id)

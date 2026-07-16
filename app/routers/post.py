@@ -10,6 +10,9 @@ from app.schemas.post import (
 
 from app.services import post_service
 
+from app.dependencies.auth import get_current_user
+
+
 router = APIRouter(
     prefix="/posts",
     tags=["Posts"]
@@ -17,7 +20,7 @@ router = APIRouter(
 
 
 # -----------------------------
-# Create Post
+# Create Post 
 # -----------------------------
 @router.post(
     "/",
@@ -26,10 +29,15 @@ router = APIRouter(
 )
 async def create_post(
     post: PostCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
 ):
     try:
-        return post_service.add_post(db, post)
+        return post_service.create_post(
+            db,
+            post,
+            current_user.id
+        )
 
     except Exception as e:
         raise HTTPException(
@@ -39,17 +47,14 @@ async def create_post(
 
 
 # -----------------------------
-# Get All Posts
+# Get All Posts 
 # -----------------------------
-@router.get(
-    "/",
-    status_code=status.HTTP_200_OK
-)
+@router.get("/")
 async def get_posts(
     db: Session = Depends(get_db)
 ):
     try:
-        return post_service.list_posts(db)
+        return post_service.get_all_posts(db)
 
     except Exception as e:
         raise HTTPException(
@@ -59,7 +64,7 @@ async def get_posts(
 
 
 # -----------------------------
-# Get Single Post
+# Get Single Post 
 # -----------------------------
 @router.get(
     "/{post_id}",
@@ -83,7 +88,7 @@ async def get_post(
 
 
 # -----------------------------
-# Update Post
+# Update Post 
 # -----------------------------
 @router.put(
     "/{post_id}",
@@ -92,13 +97,15 @@ async def get_post(
 async def update_post(
     post_id: int,
     post: PostCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
 ):
     try:
-        return post_service.edit_post(
+        return post_service.update_post(
             db,
             post_id,
-            post
+            post,
+            current_user.id
         )
 
     except Exception as e:
@@ -109,20 +116,21 @@ async def update_post(
 
 
 # -----------------------------
-# Delete Post
+# Delete Post 
 # -----------------------------
 @router.delete(
-    "/{post_id}",
-    status_code=status.HTTP_200_OK
+    "/{post_id}"
 )
 async def delete_post(
     post_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
 ):
     try:
-        post_service.remove_post(
+        post_service.delete_post(
             db,
-            post_id
+            post_id,
+            current_user.id
         )
 
         return {

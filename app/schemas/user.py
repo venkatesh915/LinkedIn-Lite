@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from typing import Optional
 from datetime import datetime
 
@@ -7,7 +7,7 @@ from datetime import datetime
 class UserBase(BaseModel):
     email: EmailStr
     full_name: str
-    user_name: str
+    username: str
 
 
 #Model for creating a New User
@@ -20,6 +20,9 @@ class UserResponse(UserBase):
     id: int
     is_active: bool
     created_at: datetime
+    model_config = ConfigDict(
+        from_attributes=True
+    )
 
 #Model for updating user profile
 class UserUpdate(BaseModel):

@@ -1,24 +1,32 @@
-from app.repositories.user_repository import get_user_by_email
+from app.repositories.user_repository import UserRepository
 from app.utils.hashing import verify_password
 from app.core.security import create_access_token
 
 
-def login_user(db, email: str, password: str):
-    """
-    Authenticate user and generate JWT token.
-    """
+user_repository = UserRepository()
 
-    # Check if user exists
-    user = get_user_by_email(db, email)
+
+def login_user(db, email: str, password: str):
+
+    # Get user by email
+    user = user_repository.get_user_by_email(
+        db,
+        email
+    )
 
     if not user:
-        raise Exception("Invalid email")
+        raise Exception("Invalid email or password")
+
 
     # Verify password
-    if not verify_password(password, user.password):
-        raise Exception("Invalid password")
+    if not verify_password(
+        password,
+        user.password
+    ):
+        raise Exception("Invalid email or password")
 
-    # Generate JWT Token
+
+    # Create JWT token
     access_token = create_access_token(
         data={
             "sub": str(user.id),
@@ -26,15 +34,8 @@ def login_user(db, email: str, password: str):
         }
     )
 
+
     return {
         "access_token": access_token,
-        "token_type": "bearer",
-        "user": user
+        "token_type": "bearer"
     }
-
-
-def get_current_user(db, email: str):
-    """
-    Return logged-in user details.
-    """
-    return get_user_by_email(db, email)
